@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator
 
-DEV_FILES_DIRNAME: str = "python_dev"
+DEV_FILES_DIRNAME: str = "explicit_python"
 
 def find_dev_files_dir() -> Path:
     cwd = Path.cwd()
@@ -19,7 +19,7 @@ def find_dev_files_dir() -> Path:
         f"Unable to find the '{DEV_FILES_DIRNAME}' directory to make symlinks in. Aborting."
     )
 
-def get_arch_dirname() -> bool:
+def get_arch_dirname() -> str:
     # Recommended over `platform.architecture()[0] == "64bit"`
     is_64_bit = sys.maxsize > 2**32
     return "x64" if is_64_bit else "x86"

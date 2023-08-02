@@ -8,7 +8,7 @@ from pathlib import Path
 
 import requests
 
-DEV_FILES_DIRNAME: str = "python_dev"
+DEV_FILES_DIRNAME: str = "explicit_python"
 
 ARCH_DIR_MAPPING: dict[str, str] = {
     "win32": "x86",
