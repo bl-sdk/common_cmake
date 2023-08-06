@@ -1,5 +1,5 @@
 # Explicitly Versioned Python
-This folder lets you link against an explictly specified python version (which is stored within the
+This folder lets you link against an explicitly specified python version (which is stored within the
 folder), rather than searching all over your system for an arbitrary version.
 
 This folder should contain (symlinks to) the python headers and static libraries. These should be
