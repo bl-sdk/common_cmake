@@ -4,7 +4,7 @@ import shutil
 import subprocess
 import tempfile
 import zipfile
-from enum import Enum
+from dataclasses import dataclass
 from pathlib import Path
 
 import requests
@@ -12,25 +12,31 @@ import requests
 __all__: tuple[str, ...] = (
     "get_default_download_dir",
     "download",
-    "Architecture",
+    "ArchInfo",
+    "ARCHITECTURES",
 )
 
 
-class Architecture(Enum):
-    # Use the python url name as the enum name, and the folder name as it's value
-    # It's a little hacky but it makes things easy.
-    win32 = "x86"
-    amd64 = "x64"
+@dataclass
+class ArchInfo:
+    py_name: str
+    folder_name: str
 
 
-def get_default_download_dir(arch: Architecture) -> Path:
+ARCHITECTURES: tuple[ArchInfo, ...] = (
+    ArchInfo("win32", "x86"),
+    ArchInfo("amd64", "x64"),
+)
+
+
+def get_default_download_dir(arch: ArchInfo) -> Path:
     """
     Gets the default download directory for the given architecture.
 
     Returns:
         The download directory.
     """
-    return Path(__file__).resolve().parent / arch.value
+    return Path(__file__).resolve().parent / arch.folder_name
 
 
 def download_file(url: str, path: Path) -> None:
@@ -75,7 +81,7 @@ def extract_msi(msi: Path, extract_dir: Path) -> None:
         )
 
 
-def download_stdlib_zip(version: str, arch: Architecture, download_dir: Path) -> None:
+def download_stdlib_zip(version: str, arch: ArchInfo, download_dir: Path) -> None:
     """
     Downloads the embedded standard library zip for the given version/arch.
 
@@ -89,7 +95,7 @@ def download_stdlib_zip(version: str, arch: Architecture, download_dir: Path) ->
     """
 
     embed_url_base = f"https://www.python.org/ftp/python/{version}/"
-    embed_name = f"python-{version}-embed-{arch.name}.zip"
+    embed_name = f"python-{version}-embed-{arch.py_name}.zip"
 
     embed_download_path = download_dir / embed_name
     download_file(embed_url_base + embed_name, embed_download_path)
@@ -111,7 +117,7 @@ def download_stdlib_zip(version: str, arch: Architecture, download_dir: Path) ->
 
 def download(
     version: str,
-    arch: Architecture,
+    arch: ArchInfo,
     stdlib: bool,
     debug: bool,
     download_dir: Path,
@@ -129,7 +135,7 @@ def download(
     download_dir.unlink(missing_ok=True)
     download_dir.mkdir(exist_ok=True)
 
-    msi_url_base = f"https://www.python.org/ftp/python/{version}/{arch.name}/"
+    msi_url_base = f"https://www.python.org/ftp/python/{version}/{arch.py_name}/"
 
     # msis we just extract straight to the download folder
     basic_msis = ["core.msi", "dev.msi"]
@@ -155,12 +161,15 @@ def download(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("version", type=str, help="The version to download.")
+
+    PY_ARCH_LOOKUP = {a.py_name: a for a in ARCHITECTURES}
+
     parser.add_argument(
         "arch",
-        choices=Architecture.__members__.keys(),
-        type=Architecture,
+        choices=PY_ARCH_LOOKUP.keys(),
         help="The architecture to download.",
     )
+
     parser.add_argument(
         "--debug",
         action=argparse.BooleanOptionalAction,
@@ -179,9 +188,10 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    arch = PY_ARCH_LOOKUP[args.arch]
 
     download_dir: Path | None = args.dir
     if download_dir is None:
-        download_dir = get_default_download_dir(args.arch)
+        download_dir = get_default_download_dir(arch)
 
-    download(args.version, args.arch, args.stdlib, args.debug, download_dir)
+    download(args.version, arch, args.stdlib, args.debug, download_dir)
