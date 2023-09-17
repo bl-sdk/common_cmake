@@ -39,12 +39,16 @@ if(EXISTS ${MSVC_WINE_ENV_SCRIPT})
     _extract_from_env("INCLUDE" "-isystem" add_compile_options)
     _extract_from_env("LIB" "-L" add_link_options)
 elseif(EXISTS ${XWIN_DIR})
-    add_compile_options(
+    set(_xwin_system_includes
         "-isystem${XWIN_DIR}/sdk/include/um"
         "-isystem${XWIN_DIR}/sdk/include/ucrt"
         "-isystem${XWIN_DIR}/sdk/include/shared"
         "-isystem${XWIN_DIR}/crt/include"
     )
+    add_compile_options(${_xwin_system_includes})
+
+    string (REPLACE ";" " " _xwin_system_include_string "${_xwin_system_includes}")
+    set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} ${_xwin_system_include_string}")
 
     if(NOT DEFINED XWIN_ARCH)
         if(${CLANG_TRIPLE} MATCHES 64)
