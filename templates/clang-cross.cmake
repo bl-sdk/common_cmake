@@ -22,8 +22,8 @@ if(EXISTS ${MSVC_WINE_ENV_SCRIPT})
     #
     # @param env_var The environment variable to extract
     # @param prefix A prefix to add to the start of each path (e.g. `-I`)
-    # @param output_function The function to call with the list of extracted paths
-    function(_extract_from_env env_var prefix output_function)
+    # @param output_var The output var to set to the list of extracted paths
+    function(_extract_from_env env_var prefix output_var)
         execute_process(
             COMMAND bash -c ". ${MSVC_WINE_ENV_SCRIPT} && echo \"\$${env_var}\""
             OUTPUT_VARIABLE env_output
@@ -33,11 +33,17 @@ if(EXISTS ${MSVC_WINE_ENV_SCRIPT})
         string(REPLACE "\\" "/" env_output "${env_output}")
         string(REGEX MATCHALL "[^;\r\n]+" env_output_list "${env_output}")
 
-        cmake_language(CALL ${output_function} ${env_output_list})
+        set(${output_var} ${env_output_list} PARENT_SCOPE)
     endfunction()
 
-    _extract_from_env("INCLUDE" "-isystem" add_compile_options)
-    _extract_from_env("LIB" "-L" add_link_options)
+    _extract_from_env("INCLUDE" "-isystem" _msvc_wine_system_includes)
+    add_compile_options(${_msvc_wine_system_includes})
+
+    string(REPLACE ";" " " _msvc_wine_system_include_string "${_msvc_wine_system_includes}")
+    set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} ${_msvc_wine_system_include_string}")
+
+    _extract_from_env("LIB" "-L" _msvc_wine_link_options)
+    add_link_options(${_msvc_wine_link_options})
 elseif(EXISTS ${XWIN_DIR})
     set(_xwin_system_includes
         "-isystem${XWIN_DIR}/sdk/include/um"
@@ -47,7 +53,7 @@ elseif(EXISTS ${XWIN_DIR})
     )
     add_compile_options(${_xwin_system_includes})
 
-    string (REPLACE ";" " " _xwin_system_include_string "${_xwin_system_includes}")
+    string(REPLACE ";" " " _xwin_system_include_string "${_xwin_system_includes}")
     set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} ${_xwin_system_include_string}")
 
     if(NOT DEFINED XWIN_ARCH)
