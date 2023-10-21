@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 import platform
 import shutil
@@ -132,7 +133,7 @@ def download(
         debug: If to include debug libraries.
         download_dir: The dir to download into.
     """
-    download_dir.unlink(missing_ok=True)
+    shutil.rmtree(download_dir, ignore_errors=True)
     download_dir.mkdir(exist_ok=True)
 
     msi_url_base = f"https://www.python.org/ftp/python/{version}/{arch.py_name}/"
