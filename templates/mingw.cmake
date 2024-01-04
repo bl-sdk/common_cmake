@@ -8,8 +8,14 @@ set(CMAKE_RC_COMPILER ${MINGW_TOOLCHAIN_PREFIX}-windres)
 add_compile_options("$<$<CONFIG:DEBUG>:-ggdb3>")
 add_link_options("$<$<CONFIG:DEBUG>:-ggdb3>")
 
-# Link `libc++.dll` and `libunwind.dll` statically
-add_link_options("-static-libstdc++" "-Wl,-Bstatic" "-lunwind")
+if(${LLVM_MINGW})
+    # Link `libc++.dll` and `libunwind.dll` statically
+    add_link_options("-static-libstdc++" "-Wl,-Bstatic" "-lunwind")
 
-# Workaround until llvm-project 692518d04b makes it into a release (i.e. 17)
-add_compile_definitions(_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS)
+    # LLVM MinGW uses an old libc++, which still has things like std::format or std::ranges
+    # marked as experimental
+    add_compile_definitions(_LIBCPP_ENABLE_EXPERIMENTAL)
+else()
+    # Link `llibgcc_s_seh-1.dll`, `libwinpthread-1.dll`, and `libstdc++-6.dll` statically
+    add_link_options("-static-libgcc" "-Wl,-Bstatic" "-lstdc++")
+endif()
