@@ -1,18 +1,18 @@
 # Explicitly Versioned Python
-This folder sets up a `explict_python` target, which lets you link against an explicitly specified
+This folder sets up a `explicit_python` target, which lets you link against an explicitly specified
 (Windows) Python version. `FindPython` is generally not suitable for what we do, since it picks an
 arbitrary version on your system, which may not even be the right architecture, and it picks a host
 version if cross compiling. This target also adds install rules for the `.dll`s, `.pyd`s, and
-`.zip`s which are needed at runtime when running an embedded intepreter.
+`.zip`s which are needed at runtime when running an embedded interpreter.
 
-The simplest way to use this is just to set `EXPLICT_PYTHON_VERSION` to the relevant version, and
-`EXPLICT_PYTHON_ARCH` to one of `win32` or `amd64`, before including this folder in CMake.
+The simplest way to use this is just to set `EXPLICIT_PYTHON_VERSION` to the relevant version, and
+`EXPLICIT_PYTHON_ARCH` to one of `win32` or `amd64`, before including this folder in CMake.
 This requires Python with `requests` to be on your PATH, and, if not running on Windows,
 `msiextract` (typically part of an `msitools` package).
 
 When setting the above variables, CMake will automatically run `download.py`. You can instead run it
 yourself, and point `EXPLICIT_PYTHON_DIR` at the folder you downloaded. You can also set this as an
-enviroment variable, which can be useful if caching it in a container.
+environment variable, which can be useful if caching it in a container.
 
 The final way to use this is to point `EXPLICIT_PYTHON_DIR` at a standard Windows Python install.
 This of course requires you install the development version. Windows installs do not normally come

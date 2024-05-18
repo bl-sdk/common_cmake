@@ -8,22 +8,22 @@ elseif(DEFINED EXPLICIT_PYTHON_DIR)
     set(_py_include_folder     "${EXPLICIT_PYTHON_DIR}/include")
     set(_py_lib_folder         "${EXPLICIT_PYTHON_DIR}/libs")
     set(_py_precompiled_folder "${EXPLICIT_PYTHON_DIR}")
-elseif(DEFINED EXPLICT_PYTHON_VERSION AND DEFINED EXPLICT_PYTHON_ARCH)
+elseif(DEFINED EXPLICIT_PYTHON_VERSION AND DEFINED EXPLICIT_PYTHON_ARCH)
     include(FetchContent)
     FetchContent_Declare(
-        _explict_python_fetch
+        _explicit_python_fetch
         # For some reason, actually putting our download command under DOWNLOAD_COMMAND causes cmake to
         # fail to touch some files in the stamp dir
         # Putting it under UPDATE_COMMAND instead works fine - and even means the cwd we download into
         # is the source dir, not the subbuild dir, which seems more appropriate
         DOWNLOAD_COMMAND ""
-        UPDATE_COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/download.py" --cache --dir . ${EXPLICT_PYTHON_VERSION} ${EXPLICT_PYTHON_ARCH}
+        UPDATE_COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/download.py" --cache --dir . ${EXPLICIT_PYTHON_VERSION} ${EXPLICIT_PYTHON_ARCH}
     )
-    FetchContent_MakeAvailable(_explict_python_fetch)
+    FetchContent_MakeAvailable(_explicit_python_fetch)
 
-    set(_py_include_folder     "${_explict_python_fetch_SOURCE_DIR}/include")
-    set(_py_lib_folder         "${_explict_python_fetch_SOURCE_DIR}/libs")
-    set(_py_precompiled_folder "${_explict_python_fetch_SOURCE_DIR}")
+    set(_py_include_folder     "${_explicit_python_fetch_SOURCE_DIR}/include")
+    set(_py_lib_folder         "${_explicit_python_fetch_SOURCE_DIR}/libs")
+    set(_py_precompiled_folder "${_explicit_python_fetch_SOURCE_DIR}")
 
 else()
     message(FATAL_ERROR "Cannot find Python version to link against!")
