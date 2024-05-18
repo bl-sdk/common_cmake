@@ -9,12 +9,13 @@ set(CMAKE_RC_COMPILER llvm-rc)
 # Problem: CMake runs toolchain files multiple times, but can't read cache variables on some runs.
 # Workaround: On first run (in which cache variables are always accessible), set an intermediary environment variable.
 # https://stackoverflow.com/a/29997033
+# This also means we can pre-set them to when running inside a container
 if(MSVC_WINE_ENV_SCRIPT OR XWIN_DIR)
-    set(ENV{_MSVC_WINE_ENV_SCRIPT} "${MSVC_WINE_ENV_SCRIPT}")
-    set(ENV{_XWIN_DIR} "${XWIN_DIR}")
+    set(ENV{MSVC_WINE_ENV_SCRIPT} "${MSVC_WINE_ENV_SCRIPT}")
+    set(ENV{XWIN_DIR} "${XWIN_DIR}")
 else()
-    set(MSVC_WINE_ENV_SCRIPT "$ENV{_MSVC_WINE_ENV_SCRIPT}")
-    set(XWIN_DIR "$ENV{_XWIN_DIR}")
+    set(MSVC_WINE_ENV_SCRIPT "$ENV{MSVC_WINE_ENV_SCRIPT}")
+    set(XWIN_DIR "$ENV{XWIN_DIR}")
 endif()
 
 if(EXISTS ${MSVC_WINE_ENV_SCRIPT})

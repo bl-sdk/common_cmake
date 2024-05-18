@@ -1,7 +1,6 @@
 __pycache__
 
-x86
-x64
+py-*/
 
 *.msi*
 *.msi*
