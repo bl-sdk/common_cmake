@@ -78,3 +78,10 @@ add_compile_options(-ffreestanding)
 
 add_compile_options("$<$<CONFIG:DEBUG>:-gdwarf>")
 add_link_options("$<$<CONFIG:DEBUG>:-gdwarf>" "$<$<CONFIG:DEBUG>:-Wl,/ignore:longsections>")
+
+# Visual Studio 17.10 included a new constexpr mutex constructor, which requires a new version of
+# VC Runtime to work properly. The cross compile build downloads the same headers.
+# As of writing this, Proton still uses an older version, meaning a build using this causes a crash
+# on startup.
+# Temporarily disable it, until we get Proton support.
+add_compile_definitions(_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
