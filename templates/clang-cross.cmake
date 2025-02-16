@@ -85,3 +85,6 @@ add_link_options("$<$<CONFIG:DEBUG>:-gdwarf>" "$<$<CONFIG:DEBUG>:-Wl,/ignore:lon
 # on startup.
 # Temporarily disable it, until we get Proton support.
 add_compile_definitions(_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
+
+# See llvm-project#59689 - use the builtin so that offsetof becomes constexpr
+add_compile_definitions(_CRT_USE_BUILTIN_OFFSETOF)

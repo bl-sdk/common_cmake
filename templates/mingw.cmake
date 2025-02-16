@@ -15,6 +15,9 @@ if(${LLVM_MINGW})
     # LLVM MinGW uses an old libc++, which still has things like std::format or std::ranges
     # marked as experimental
     add_compile_definitions(_LIBCPP_ENABLE_EXPERIMENTAL)
+
+    # See llvm-project#59689 - use the builtin so that offsetof becomes constexpr
+    add_compile_definitions(_CRT_USE_BUILTIN_OFFSETOF)
 else()
     # Link `llibgcc_s_seh-1.dll`, `libwinpthread-1.dll`, and `libstdc++-6.dll` statically
     add_link_options("-static-libgcc" "-Wl,-Bstatic" "-lstdc++")
