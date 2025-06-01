@@ -62,7 +62,7 @@ function(_install_python_files source_folder install_folder)
         else()
             install(
                 FILES ${_file}
-                CONFIGURATIONS Release
+                CONFIGURATIONS Release RelWithDebInfo MinSizeRel
                 DESTINATION ${install_folder}
             )
         endif()
